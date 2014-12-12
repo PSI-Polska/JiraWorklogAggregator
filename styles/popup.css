@@ -1,0 +1,64 @@
+﻿body {
+	width: 170px;
+	overflow-x: hidden;
+	font: 12px/12px 'Open Sans',arial,sans-serif;
+	text-align: center;
+	cursor: pointer;
+}
+a {
+	color: #C26F27;
+}
+a:hover {
+	color: #ED7E1C;
+}
+.container {
+	display: block;
+}
+
+.container div {
+	float: left;
+	margin: 0px 0px 5px 0px;
+}
+
+#time {
+	margin-left: 5px;
+	font-weight: bold;
+}
+
+#loader {
+	width: 100%;
+	text-align: center;
+}
+hr {
+	width: 100%;
+}
+#entrances {
+	margin: 5px 0px 0px 0px;
+}
+.in,.out {
+	padding: 5px;
+	font-weight: bold;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
+	display: block;
+}
+.in {
+	border:1px solid #BFBFBF;
+	background-image: url('/../img/arrow-in1.png');
+	background-position: left 10px center;
+}
+.out {
+	border:1px solid #7FD400;
+	background-image: url('/../img/arrow-in1.png');
+	background-position: right 10px center;
+}
+
+.in:before {
+	content: "WEJŚCIE ";
+	font-weight: normal;
+}
+
+.out:before {
+	content: "WYJŚCIE ";
+	font-weight: normal;
+}

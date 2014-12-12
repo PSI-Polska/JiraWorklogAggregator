@@ -1,0 +1,65 @@
+html {
+
+}
+
+body{
+	overflow-x: hidden;
+	font: 12px/12px 'Consolas',arial,sans-serif;
+	text-align: center;
+	margin: 0 auto;
+}
+
+a {
+	color: #C26F27;
+}
+a:hover {
+	color: #ED7E1C;
+}
+
+#popupTimeout {
+	padding: 1px;
+}
+
+#info {
+	margin: 10px 0px 10px 0px;
+	font-size: 14px;
+	height: 14px;
+}
+
+.info {
+	font-size: 12px;
+	color: #C2AFAF;
+}
+
+.option {
+	margin: 5px;
+}
+
+.optionsTable {
+	margin: 0px auto;
+}
+
+.saveinfo {
+	min-height: 15px;
+	margin: 10px 0px 10px 0px;
+}
+
+#donate {
+	margin: 30px 0px 0px 0px;
+}
+
+table {
+	text-align: left;
+}
+
+table th{
+	text-align: center;
+}
+
+table td.value {
+	text-align: center;
+}
+
+img {
+	vertical-align: -8px;
+}

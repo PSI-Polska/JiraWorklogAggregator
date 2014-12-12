@@ -1,0 +1,39 @@
+html {
+
+}
+
+body{
+	overflow-x: hidden;
+	font: 14px/14px 'Consolas',arial,sans-serif;
+	text-align: center;
+}
+
+a {
+	color: #C26F27;
+}
+a:hover {
+	color: #ED7E1C;
+}
+
+.container {
+	display: list-item;
+	padding: 5px;
+}
+
+.container div {
+	float: left;
+}
+.container img {
+	float: left;
+	padding: 0px 5px 0px 5px;
+}
+#message {
+	margin: 5px 0px 5px 0px;
+}
+#time {
+	margin: 5px 0px 5px 0px;
+	font-weight: bold;
+	font-size: 16px;
+	width: 100%;
+	text-align: center;
+}
