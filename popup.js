@@ -5,15 +5,16 @@
 	var mondayString = monday.getFullYear() + '/' + (monday.getMonth()+1) + '/' + monday.getDate()
 	var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth()+1) + '/' + saturday.getDate()
 	$.ajax({
-		   url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search?jql=project=ppljls%20and%20updatedDate>"' + mondayString + '" %20and%20updatedDate< "'+ saturdayString + '"',
-		   data: {},
+		   url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search',
+		   type: 'POST',
+		   contentType: 'application/json',
+		   data: '{"jql" : "project=ppljls and updatedDate > \'' + mondayString +'\' and updatedDate < \'' + saturdayString +'\' "}',
 		   success: function (data, status, jqXHR) {
-					console.log('success');
-					console.log(data);
-
+				console.log('success');
+				console.log(data);
 		   },
 		   error: function (data, status, error) {
-				   					console.log('fail');
+				console.log('fail');
 
 		   },
 		  });
