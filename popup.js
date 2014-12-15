@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     var worklogsInDays = new Object();
                     for (var i = 0; i < 6; i++) {
                         worklogsInDays[i] = filter(list, i);
-                        worklogsInDays[i].total = function(){
-                            var total =0;
-                            this.forEach(function(worklog){
+                        worklogsInDays[i].total = function() {
+                            var total = 0;
+                            this.forEach(function(worklog) {
                                 total += worklog.timeSpentSeconds;
                             });
                             return total;
@@ -40,58 +40,55 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             });
-},
-error: function(data, status, error) {
-    console.log('fail');
-},
-});
 
-function getDateOfWeekDay(day) {
-    var now = new Date();
-    var mondayDay = now.getDate() - now.getDay() + 1 + day;
-    var mondayDateWithTime = new Date(now.setDate(mondayDay));
-    var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
-    return monday;
-}
-
-function processResponse(data, callback) {
-
-    var map = new Object();
-    var issuesCount = data.issues.length;
-    (function() {
-        var mapC = map;
-        var issuesCountC = issuesCount
-        data.issues.forEach(function(entry) {
-            (
-                function() {
-                    retrieveWorklogs(entry.key, function(worklogs) {
-                        worklogs.forEach(function(worklog) {
-                            if (mapC[worklog.author.displayName] == undefined) {
-                                mapC[worklog.author.displayName] = new Array();
+            function processResponse(data, callback) {
+                var map = new Object();
+                var issuesCount = data.issues.length;
+                (function() {
+                    var mapC = map;
+                    var issuesCountC = issuesCount
+                    data.issues.forEach(function(entry) {
+                        (function() {
+                                retrieveWorklogs(entry.key, function(worklogs) {
+                                    worklogs.forEach(function(worklog) {
+                                        if (mapC[worklog.author.displayName] == undefined) {
+                                            mapC[worklog.author.displayName] = new Array();
+                                        }
+                                        mapC[worklog.author.displayName].push(worklog);
+                                    })
+                                    issuesCountC = issuesCountC - 1;
+                                    if (issuesCountC == 0) {
+                                        callback.call(this, mapC);
+                                    }
+                                })
                             }
-                            mapC[worklog.author.displayName].push(worklog);
-                        })
-                        issuesCountC = issuesCountC - 1;
-                        if (issuesCountC == 0) {
-                            callback.call(this, mapC);
-                        }
-                    })
+                        )()
+                    });
+                })()
+                function retrieveWorklogs(issueKey, callback) {
+                    $.ajax({
+                        url: 'http://bocian-lenovo:2990/jira/rest/api/2/issue/' + issueKey + '/worklog',
+                        contentType: 'application/json',
+                        success: function(data, status, jqXHR) {
+                            callback.call(this, data.worklogs);
+                        },
+                        error: function(data, status, error) {
+                            console.log('fail');
+                        },
+                    });
                 }
-                )()
-            });
-    })()
+            }
+        },
+        error: function(data, status, error) {
+            console.log('fail');
+        },
+    });
 
-    function retrieveWorklogs(issueKey, callback) {
-        $.ajax({
-            url: 'http://bocian-lenovo:2990/jira/rest/api/2/issue/' + issueKey + '/worklog',
-            contentType: 'application/json',
-            success: function(data, status, jqXHR) {
-                callback.call(this, data.worklogs);
-            },
-            error: function(data, status, error) {
-                console.log('fail');
-            },
-        });
+    function getDateOfWeekDay(day) {
+        var now = new Date();
+        var mondayDay = now.getDate() - now.getDay() + 1 + day;
+        var mondayDateWithTime = new Date(now.setDate(mondayDay));
+        var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+        return monday;
     }
-}
 });

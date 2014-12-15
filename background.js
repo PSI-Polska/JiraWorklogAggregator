@@ -27,8 +27,40 @@ var popupTimeFactor = 60000;
 var requestTimeFactor = 60000;
 var notificationShowupTime = 7000; // in seconds
 
+var jiraStatus = new Object();
+
+
+function isLoggedInJira(){
+					console.log("checking...");
+                    $.ajax({
+                        url: 'http://bocian-lenovo:2990/jira/rest/api/2/myself',
+                        contentType: 'application/json',
+                        success: function(data, status, jqXHR) {
+                            jiraStatus.connected = true;
+                            jiraStatus.user = data;
+                        },
+                        error: function(data, status, error) {
+                            jiraStatus.connected = false;
+                            jiraStatus.user = undefined;
+                        },
+                    });
+}
+
+function jiraRequestInterval(){
+	isLoggedInJira();
+}
+
+
+requestTimer = createInterval(jiraRequestInterval, requestTimeout, requestTimeFactor, requestTimer);
+
+
+
 
 chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
+	if(message.method == 'isLoggedInJira')
+	{
+		sendResponse(jiraStatus);
+	}
 	if(message.method == 'isLogged')
 	{
 		sendResponse({isLogged : loggedIn, url: targetUrl});
@@ -188,9 +220,9 @@ function readTime(callback){
 	}
 };
 
-readTime(function(){
-	popupInterval();
-});
+//readTime(function(){
+//	popupInterval();
+//});
 
 var requestInterval = function() {
 	readTime();
@@ -262,8 +294,8 @@ function play(){
 	}
 };
 
-popupTimer = createInterval(popupInterval, popupTimeout, popupTimeFactor, popupTimer);
-requestTimer = createInterval(requestInterval, requestTimeout, requestTimeFactor, requestTimer);
+//popupTimer = createInterval(popupInterval, popupTimeout, popupTimeFactor, popupTimer);
+//requestTimer = createInterval(requestInterval, requestTimeout, requestTimeFactor, requestTimer);
 
 function install_notice() {
     if (localStorage.getItem('install_time'))
@@ -284,5 +316,5 @@ function isTrue(input) {
     return !!input;
 }
 
-install_notice();
+//install_notice();
 
