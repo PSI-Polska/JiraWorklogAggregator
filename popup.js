@@ -28,18 +28,33 @@
     }
 
     function processResponse(data) {
-        data.issues.forEach(function(entry) {
-            retrieveWorklogs(entry.key, function(data) {
-                console.log(data);
+
+        var map = new Object();
+		map['a'] = 23;
+
+        (function() {
+			var mapC = map;
+            data.issues.forEach(function(entry) {
+                (
+                    function() {
+                        retrieveWorklogs(entry.key, function(worklogs) {
+                            worklogs.forEach(function(worklog) {
+								console.log(mapC['a']);
+                               // console.log(worklog);
+                            })
+                        })
+                    }
+                )()
             });
-        });
+        })()
+
 
         function retrieveWorklogs(issueKey, callback) {
             $.ajax({
                 url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/issue/' + issueKey + '/worklog',
                 contentType: 'application/json',
                 success: function(data, status, jqXHR) {
-                    callback.call(this,data);
+                    callback.call(this, data.worklogs);
                 },
                 error: function(data, status, error) {
                     console.log('fail');
