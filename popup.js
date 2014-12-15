@@ -30,24 +30,29 @@
     function processResponse(data) {
 
         var map = new Object();
-		map['a'] = 23;
-
+        var issuesCount = data.issues.length;
         (function() {
-			var mapC = map;
+            var mapC = map;
+            var issuesCountC = issuesCount
             data.issues.forEach(function(entry) {
                 (
                     function() {
                         retrieveWorklogs(entry.key, function(worklogs) {
                             worklogs.forEach(function(worklog) {
-								console.log(mapC['a']);
-                               // console.log(worklog);
+                                if (mapC[worklog.author.displayName] == undefined) {
+                                    mapC[worklog.author.displayName] = new Array();
+                                }
+                                mapC[worklog.author.displayName].push(worklog);
                             })
+                            issuesCountC = issuesCountC - 1;
+                            if (issuesCountC == 0) {
+                                console.log(mapC);
+                            }
                         })
                     }
                 )()
             });
         })()
-
 
         function retrieveWorklogs(issueKey, callback) {
             $.ajax({
