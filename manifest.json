@@ -32,9 +32,10 @@
   "permissions": [
 	"background",
 	"unlimitedStorage",
-    "notifications",
+    	"notifications",
 	"idle",
 	"http://dotproject.psipolska.com/*",
-	"http://dotproject.psi.pl/*"
+	"http://dotproject.psi.pl/*",
+	"http://bocian-lenovo:2990/*"
   ]
 }
