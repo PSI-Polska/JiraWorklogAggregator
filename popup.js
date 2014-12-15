@@ -2,8 +2,10 @@
 	console.log('initial login');
 	var monday = getMonday();
 	var saturday = getSaturday();
+	var mondayString = monday.getFullYear() + '/' + (monday.getMonth()+1) + '/' + monday.getDate()
+	var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth()+1) + '/' + saturday.getDate()
 	$.ajax({
-		   url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search?jql=project=ppljls%20and%20updatedDate>"' + monday.getFullYear() + '/' + monday.getMonth() + '/' + monday.getDay()+ '"',
+		   url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search?jql=project=ppljls%20and%20updatedDate>"' + mondayString + '" %20and%20updatedDate< "'+ saturdayString + '"',
 		   data: {},
 		   success: function (data, status, jqXHR) {
 					console.log('success');
@@ -16,16 +18,20 @@
 		   },
 		  });
 		  
-		  function getMonday() {
-   var now = new Date();
-   var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate()+(1 - now.getDay()));
-   return monday;
+function getMonday() {
+var now = new Date();
+var mondayDay = now.getDate() - now.getDay() +1; 
+var mondayDateWithTime = new Date(now.setDate(mondayDay));
+var monday =  new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+return monday;
 }
 
-		  function getSaturday() {
-   var now = new Date();
-   var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate()+(6 - now.getDay()));
-   return monday;
+function getSaturday() {
+var now = new Date();
+var saturdayDay = now.getDate() - now.getDay() +6; 
+var saturdayDate = new Date(now.setDate(saturdayDay));
+var saturdayDateDate =  new Date(saturdayDate.getFullYear(), saturdayDate.getMonth(), saturdayDate.getDate());
+return saturdayDateDate;
 }
 			
 		  
