@@ -8,11 +8,27 @@
         url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
-        data: '{"jql" : "project=ppljls and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' "}',
+        data: '{"jql" : "project=ppljls and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
         success: function(data, status, jqXHR) {
             console.log('success');
-            console.log(data);
-            processResponse(data);
+            processResponse(data, function(map) {
+                console.log(map);
+
+                for (var key in map) {
+                    var obj = map[key];
+                    var filtered = filterWorklogs(obj);
+                }
+
+                console.log(filtered);
+
+
+                function filterWorklogs(list) {
+                    return list.filter(function(worklog) {
+                        return new Date(worklog.started) > monday && new Date(worklog.started) < saturday;
+                    });
+                }
+
+            });
         },
         error: function(data, status, error) {
             console.log('fail');
@@ -27,7 +43,7 @@
         return monday;
     }
 
-    function processResponse(data) {
+    function processResponse(data, callback) {
 
         var map = new Object();
         var issuesCount = data.issues.length;
@@ -46,7 +62,7 @@
                             })
                             issuesCountC = issuesCountC - 1;
                             if (issuesCountC == 0) {
-                                console.log(mapC);
+                                callback.call(this, mapC);
                             }
                         })
                     }
