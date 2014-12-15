@@ -12,6 +12,7 @@
         success: function(data, status, jqXHR) {
             console.log('success');
             console.log(data);
+            processResponse(data);
         },
         error: function(data, status, error) {
             console.log('fail');
@@ -26,5 +27,24 @@
         return monday;
     }
 
+    function processResponse(data) {
+        data.issues.forEach(function(entry) {
+            retrieveWorklogs(entry.key, function(data) {
+                console.log(data);
+            });
+        });
 
+        function retrieveWorklogs(issueKey, callback) {
+            $.ajax({
+                url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/issue/' + issueKey + '/worklog',
+                contentType: 'application/json',
+                success: function(data, status, jqXHR) {
+                    callback.call(this,data);
+                },
+                error: function(data, status, error) {
+                    console.log('fail');
+                },
+            });
+        }
+    }
 });
