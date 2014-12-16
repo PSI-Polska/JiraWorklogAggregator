@@ -93,12 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 		function checkJiraUrlCorrection(){
-			                    $.ajax({
+					$.ajax({
                         url: $("#jiraUrl").val() + 'rest/api/2/serverInfo',
                         contentType: 'application/json',
                         success: function(data, status, jqXHR) {
                         	$('#jiraUrlRow .test').removeClass('wrong');
                             $('#jiraUrlRow .test').addClass('correct');
+
                         },
                         error: function(data, status, error) {
                         	$('#jiraUrlRow .test').removeClass('correct');

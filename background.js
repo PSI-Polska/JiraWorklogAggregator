@@ -32,118 +32,107 @@ var requestTimeFactor = 60000;
 var notificationShowupTime = 7000; // in seconds
 
 
-isLoggedInJira();
-
-var jiraStatus = new Object();
 
 
-function isLoggedInJira(){
-					console.log("checking...");
+function getJiraLogin(callback) {
+    console.log("checking...");
+    var jiraStatus = new Object();
+    $.ajax({
+        url: jiraUrl + 'rest/api/2/serverInfo',
+        contentType: 'application/json',
+        success: function(data, status, jqXHR) {
+            jiraStatus.connected = true;
+            $.ajax({
+                url: jiraUrl + 'rest/auth/1/session',
+                contentType: 'application/json',
+                success: function(data, status, jqXHR) {
                     $.ajax({
-                        url: jiraUrl + 'rest/auth/1/session',
+                        url: data.self,
                         contentType: 'application/json',
                         success: function(data, status, jqXHR) {
-							$.ajax({
-								url: data.self,
-								contentType: 'application/json',
-								success : function(data,status, jqXHR){
-									jiraStatus.connected = true;
-									jiraStatus.user = data;	
-								},
-								eror : function(data,status,error){
-									jiraStatus.connected = true;
-									jiraStatus.user = data;
-								},
-							})
+                            jiraStatus.user = data;
+                            callback.call(this, jiraStatus);
                         },
                         error: function(data, status, error) {
-                            jiraStatus.connected = false;
-                            jiraStatus.user = undefined;
+                            callback.call(this, jiraStatus);
                         },
-                    });
+                    })
+                },
+                error: function(data, status, error) {
+                    callback.call(this, jiraStatus);
+                },
+            })
+        },
+        error: function(data, status, error) {
+            jiraStatus.connected = false;
+            jiraStatus.user = undefined;
+            callback.call(this, jiraStatus);
+
+        },
+    });
 }
 
-function jiraRequestInterval(){
-	isLoggedInJira();
-}
 
 
-requestTimer = createInterval(jiraRequestInterval, requestTimeout, requestTimeFactor, requestTimer);
-
-
-chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
-	if(message.method == 'isLoggedInJira')
-	{
-		sendResponse(jiraStatus);
-	}
-	if(message.method == 'getHoursForUsers')
-	{
-		getHoursForUser(function(data){
-			sendResponse(data);
-		});
-		return true;
-	}
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.method == 'getJiraLogin') {
+        getJiraLogin(function(data) {
+            sendResponse(data);
+        });
+        return true;
+    }
+    if (message.method == 'getHoursForUsers') {
+        getHoursForUser(function(data) {
+            sendResponse(data);
+        });
+        return true;
+    }
 });
 
 
 function setBadgeText(badgeText) {
-	var details = {
-		text : badgeText
-	};
-	chrome.browserAction.setBadgeBackgroundColor({"color": [hexToR(badgeColor), hexToG(badgeColor), hexToB(badgeColor), 125]});
-	chrome.browserAction.setBadgeText(details);
+    var details = {
+        text: badgeText
+    };
+    chrome.browserAction.setBadgeBackgroundColor({
+        "color": [hexToR(badgeColor), hexToG(badgeColor), hexToB(badgeColor), 125]
+    });
+    chrome.browserAction.setBadgeText(details);
 }
 
 
 
 var requestInterval = function() {
-	readTime();
+    readTime();
 };
 
 function createInterval(callback, delay, factor, oldInterval) {
-	clearInterval(oldInterval);
-	return setInterval(callback, delay * factor);
+    clearInterval(oldInterval);
+    return setInterval(callback, delay * factor);
 };
 
+// function install_notice() {
+//     if (localStorage.getItem('install_time'))
+//         return;
+
+//     var now = new Date().getTime();
+//     localStorage.setItem('install_time', now);
+//     chrome.tabs.create({url: "options.html"});
+// 	chrome.tabs.create({url: 'http://'+targetUrl+'/?m=PSIEntranceLogger&tab=0'});
+// 	alert('Proszę zaloguj się do DotProject w celu pobrania ID twojego użytkownika.');
+// }
 
 
-//popupTimer = createInterval(popupInterval, popupTimeout, popupTimeFactor, popupTimer);
-//requestTimer = createInterval(requestInterval, requestTimeout, requestTimeFactor, requestTimer);
-
-function install_notice() {
-    if (localStorage.getItem('install_time'))
-        return;
-
-    var now = new Date().getTime();
-    localStorage.setItem('install_time', now);
-    chrome.tabs.create({url: "options.html"});
-	chrome.tabs.create({url: 'http://'+targetUrl+'/?m=PSIEntranceLogger&tab=0'});
-	alert('Proszę zaloguj się do DotProject w celu pobrania ID twojego użytkownika.');
-}
-
-function isTrue(input) {
-    if (typeof input == 'string') {
-        return input.toLowerCase() == 'true';
-    }
-
-    return !!input;
-}
-
-//install_notice();
-
-
-
-
-function getHoursForUser(callback){
+function getHoursForUser(callback) {
     var monday = getDateOfWeekDay(0);
     var saturday = getDateOfWeekDay(5);
     var mondayString = monday.getFullYear() + '/' + (monday.getMonth() + 1) + '/' + monday.getDate()
     var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth() + 1) + '/' + saturday.getDate()
     $.ajax({
-        url: jiraUrl +'rest/api/2/search',
+        url: jiraUrl + 'rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
-        data: '{"jql" : "project='+projectKey+' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
+        data: '{"jql" : "project=' + projectKey + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
         success: function(data, status, jqXHR) {
             console.log('success');
             processResponse(data, function(map) {
@@ -152,16 +141,16 @@ function getHoursForUser(callback){
                     var obj = map[key];
                     results[key] = filterWorklogs(obj);
                 }
-                callback.call(this,results);
+                callback.call(this, results);
 
                 function filterWorklogs(list) {
                     var worklogsInDays = new Object();
                     for (var i = 0; i < 6; i++) {
                         worklogsInDays[i] = filter(list, i);
                     }
-                    return worklogsInDays;			
+                    return worklogsInDays;
                 }
-				
+
                 function filter(list, dayOfWeek) {
                     return list.filter(function(worklog) {
                         return new Date(worklog.started) > getDateOfWeekDay(dayOfWeek) && new Date(worklog.started) < getDateOfWeekDay(dayOfWeek + 1);
@@ -177,22 +166,22 @@ function getHoursForUser(callback){
                     var issuesCountC = issuesCount
                     data.issues.forEach(function(entry) {
                         (function() {
-                                retrieveWorklogs(entry.key, function(worklogs) {
-                                    worklogs.forEach(function(worklog) {
-                                        if (mapC[worklog.author.name] == undefined) {
-                                            mapC[worklog.author.name] = new Array();
-                                        }
-                                        mapC[worklog.author.name].push(worklog);
-                                    })
-                                    issuesCountC = issuesCountC - 1;
-                                    if (issuesCountC == 0) {
-                                        callback.call(this, mapC);
+                            retrieveWorklogs(entry.key, function(worklogs) {
+                                worklogs.forEach(function(worklog) {
+                                    if (mapC[worklog.author.name] == undefined) {
+                                        mapC[worklog.author.name] = new Array();
                                     }
+                                    mapC[worklog.author.name].push(worklog);
                                 })
-                            }
-                        )()
+                                issuesCountC = issuesCountC - 1;
+                                if (issuesCountC == 0) {
+                                    callback.call(this, mapC);
+                                }
+                            })
+                        })()
                     });
                 })()
+
                 function retrieveWorklogs(issueKey, callback) {
                     $.ajax({
                         url: jiraUrl + 'rest/api/2/issue/' + issueKey + '/worklog',
@@ -220,5 +209,3 @@ function getHoursForUser(callback){
         return monday;
     }
 }
-
-
