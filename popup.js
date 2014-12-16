@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function(){
 			}
 		}
 		chrome.runtime.sendMessage({method:'isLoggedInJira'}, function(response){
-			$('#'+key).addClass('currentlyLogged');
+			$('#'+response.user.name).addClass('currentlyLogged');
 		});
 
 		
