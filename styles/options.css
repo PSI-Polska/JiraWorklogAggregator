@@ -20,10 +20,25 @@ a:hover {
 	padding: 1px;
 }
 
+.test{
+	width: 15px;
+	background-repeat: no-repeat;
+	text-align: center;
+	background-position-y: 6px;
+}
+
 #info {
 	margin: 10px 0px 10px 0px;
 	font-size: 14px;
 	height: 14px;
+}
+
+.correct{
+	background-image: url('../img/correct.gif');
+}
+
+.wrong{
+		background-image: url('../img/wrong.gif');
 }
 
 .info {

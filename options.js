@@ -5,6 +5,10 @@
 	var showPopup = localStorage["showPopup"];
 	var revertTime = localStorage["revertTime"];
 	var playGoHome = localStorage["playGoHome"];
+	var jiraUrl = localStorage["jiraUrl"];
+	var projectKey = localStorage["projectKey"];
+
+
 	
 	if(popupTimeout === undefined)
 	{
@@ -30,6 +34,9 @@
 	{
 		playGoHome = false;
 	}
+	$("#jiraUrl").val(jiraUrl);
+	$("#projectKey").val(projectKey);
+
 	$("#popupTimeout").val(popupTimeout);
 	$("#requestTimeout").val(requestTimeout);
 	$("#color").val(badgeColor);
@@ -40,6 +47,10 @@
 };
 
 function save_options(){
+	localStorage["jiraUrl"] = $('#jiraUrl').val();
+	localStorage["projectKey"] = $('#projectKey').val();
+
+
 	localStorage["showPopup"] = $('#showPopup').prop("checked");
 	
 	localStorage["revertTime"] = $('#revertTime').prop("checked");
@@ -74,10 +85,50 @@ document.addEventListener('DOMContentLoaded', function () {
 	$("#save").click(function() {
 		save_options();
 	});
-	$('#showPopup').change(checkShowPopup);
-	$('input').keypress(function(){
-		event.preventDefault();
-	});
+
+	$("#jiraUrl").bind('input',checkJiraUrlCorrection);
+
+		$("#projectKey").bind('input',checkProjectKeyCorrection);
+
+
+
+		function checkJiraUrlCorrection(){
+			                    $.ajax({
+                        url: $("#jiraUrl").val() + 'rest/api/2/serverInfo',
+                        contentType: 'application/json',
+                        success: function(data, status, jqXHR) {
+                        	$('#jiraUrlRow .test').removeClass('wrong');
+                            $('#jiraUrlRow .test').addClass('correct');
+                        },
+                        error: function(data, status, error) {
+                        	$('#jiraUrlRow .test').removeClass('correct');
+                            $('#jiraUrlRow .test').addClass('wrong');
+                        },
+                    });
+		}
+
+		function checkProjectKeyCorrection(){
+			                    $.ajax({
+                        url: $("#jiraUrl").val() + 'rest/api/2/project/'+$("#projectKey").val(),
+                        contentType: 'application/json',
+                        success: function(data, status, jqXHR) {
+                        	$('#projectKeyRow .test').removeClass('wrong');
+                            $('#projectKeyRow .test').addClass('correct');
+                        },
+                        error: function(data, status, error) {
+                        	$('#projectKeyRow .test').removeClass('correct');
+                            $('#projectKeyRow .test').addClass('wrong');
+                        },
+                    });
+		}
+
+
+
 	restore_options();
 	checkShowPopup();
+
+	checkJiraUrlCorrection();
+checkProjectKeyCorrection();
+
+
 });
