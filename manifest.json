@@ -20,7 +20,7 @@
   "content_scripts":[
     {
         "matches": ["http://*/*", "https://*/*"],
-        "js" : ["jquery-1.9.1.min.js", "popup.js", "jscolor.js"]
+        "js" : ["jquery-1.9.1.min.js", "popup.js", "jscolor.js","jira.js"]
     }
   ],
   "browser_action": {
@@ -36,6 +36,7 @@
 	"idle",
 	"http://dotproject.psipolska.com/*",
 	"http://dotproject.psi.pl/*",
-	"http://bocian-lenovo:2990/*"
+	"http://bocian-lenovo:2990/*",
+	"http://jira-bld-ppl.psi.de/*"
   ]
 }
