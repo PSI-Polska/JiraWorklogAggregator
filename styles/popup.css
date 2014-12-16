@@ -5,6 +5,11 @@
 	text-align: center;
 	cursor: pointer;
 }
+
+.currentlyLogged{
+	background-color:#f0f8ff
+}
+
 a {
 	color: #C26F27;
 }

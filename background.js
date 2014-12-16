@@ -366,18 +366,10 @@ function getHoursForUser(callback){
                     var worklogsInDays = new Object();
                     for (var i = 0; i < 6; i++) {
                         worklogsInDays[i] = filter(list, i);
-                        worklogsInDays[i].total = function() {
-                            var total = 0;
-                            this.forEach(function(worklog) {
-                                total += worklog.timeSpentSeconds;
-                            });
-                            return total;
-                        }
                     }
-                    return worklogsInDays;
+                    return worklogsInDays;			
                 }
-
-
+				
                 function filter(list, dayOfWeek) {
                     return list.filter(function(worklog) {
                         return new Date(worklog.started) > getDateOfWeekDay(dayOfWeek) && new Date(worklog.started) < getDateOfWeekDay(dayOfWeek + 1);
@@ -395,10 +387,10 @@ function getHoursForUser(callback){
                         (function() {
                                 retrieveWorklogs(entry.key, function(worklogs) {
                                     worklogs.forEach(function(worklog) {
-                                        if (mapC[worklog.author.displayName] == undefined) {
-                                            mapC[worklog.author.displayName] = new Array();
+                                        if (mapC[worklog.author.name] == undefined) {
+                                            mapC[worklog.author.name] = new Array();
                                         }
-                                        mapC[worklog.author.displayName].push(worklog);
+                                        mapC[worklog.author.name].push(worklog);
                                     })
                                     issuesCountC = issuesCountC - 1;
                                     if (issuesCountC == 0) {
