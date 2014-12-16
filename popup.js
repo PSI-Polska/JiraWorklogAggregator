@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var mondayString = monday.getFullYear() + '/' + (monday.getMonth() + 1) + '/' + monday.getDate()
     var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth() + 1) + '/' + saturday.getDate()
     $.ajax({
-        url: 'http://bocian-lenovo:2990/jira/rest/api/2/search',
+        url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
         data: '{"jql" : "project=ppljls and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })()
                 function retrieveWorklogs(issueKey, callback) {
                     $.ajax({
-                        url: 'http://bocian-lenovo:2990/jira/rest/api/2/issue/' + issueKey + '/worklog',
+                        url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/issue/' + issueKey + '/worklog',
                         contentType: 'application/json',
                         success: function(data, status, jqXHR) {
                             callback.call(this, data.worklogs);

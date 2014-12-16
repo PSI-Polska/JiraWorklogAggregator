@@ -27,17 +27,30 @@ var popupTimeFactor = 60000;
 var requestTimeFactor = 60000;
 var notificationShowupTime = 7000; // in seconds
 
+
+isLoggedInJira();
+
 var jiraStatus = new Object();
 
 
 function isLoggedInJira(){
 					console.log("checking...");
                     $.ajax({
-                        url: 'http://bocian-lenovo:2990/jira/rest/api/2/myself',
+                        url: 'http://jira-bld-ppl.psi.de:8080/rest/auth/1/session',
                         contentType: 'application/json',
                         success: function(data, status, jqXHR) {
-                            jiraStatus.connected = true;
-                            jiraStatus.user = data;
+							$.ajax({
+								url: data.self,
+								contentType: 'application/json',
+								success : function(data,status, jqXHR){
+									jiraStatus.connected = true;
+									jiraStatus.user = data;	
+								},
+								eror : function(data,status,error){
+									jiraStatus.connected = true;
+									jiraStatus.user = data;
+								},
+							})
                         },
                         error: function(data, status, error) {
                             jiraStatus.connected = false;
