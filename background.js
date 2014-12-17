@@ -81,6 +81,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         });
         return true;
     }
+	if (message.method == 'getJiraUrl') {
+		sendResponse(localStorage['jiraUrl']);
+    }
     if (message.method == 'getHoursForUsers') {
         getHoursForUser(function(data) {
             sendResponse(data);

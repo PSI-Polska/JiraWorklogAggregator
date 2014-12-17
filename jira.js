@@ -1,4 +1,9 @@
-if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
+chrome.runtime.sendMessage({method:'getJiraUrl'}, function(jiraUrl){
+
+
+
+
+if (new RegExp(jiraUrl+'browse').test(document.URL)) {
     $(document).ready(function() {
         getIssueTree(getIssueKey(),function(issues) {
 
@@ -14,7 +19,7 @@ if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
     });
 }
 
-if (/http:\/\/jira-bld-ppl.psi.de:8080\/issues\//.test(document.URL)) {
+if (new RegExp(jiraUrl+'issues').test(document.URL)) {
     $(document).ready(function() {
         var trs = $('#issuetable tr');
         trs.each(function(i, tr){
@@ -55,7 +60,7 @@ function getIssueKey() {
 
 function getIssueTree(epicKey, callback) {
     $.ajax({
-        url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/issue/' + epicKey,
+        url: jiraUrl+'rest/api/2/issue/' + epicKey,
         contentType: 'application/json',
         success: function(data, status, jqXHR) {
             if (data.fields.issuetype.name == 'Epic') {
@@ -101,7 +106,7 @@ function getIssueTree(epicKey, callback) {
 
 function getIssuesInEpic(epicKey, callback) {
     $.ajax({
-        url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search',
+        url: jiraUrl+'rest/api/2/search',
         type: 'POST',
         data: '{"jql" : "cf[10096] = ' + epicKey + '" }',
         contentType: 'application/json',
@@ -116,7 +121,7 @@ function getIssuesInEpic(epicKey, callback) {
 
 function getSubtasks(parent, callback) {
     $.ajax({
-        url: 'http://jira-bld-ppl.psi.de:8080/rest/api/2/search',
+        url: jiraUrl+'rest/api/2/search',
         type: 'POST',
         data: '{"jql" : "parent =  ' + parent.key + ' "}',
         contentType: 'application/json',
@@ -128,3 +133,5 @@ function getSubtasks(parent, callback) {
         },
     });
 }
+
+});
