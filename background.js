@@ -129,7 +129,7 @@ function getHoursForUser(callback) {
     var mondayString = monday.getFullYear() + '/' + (monday.getMonth() + 1) + '/' + monday.getDate()
     var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth() + 1) + '/' + saturday.getDate()
     $.ajax({
-        url: jiraUrl + 'rest/api/2/search',
+        url: localStorage["jiraUrl"] + 'rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
         data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
@@ -184,7 +184,7 @@ function getHoursForUser(callback) {
 
                 function retrieveWorklogs(issueKey, callback) {
                     $.ajax({
-                        url: jiraUrl + 'rest/api/2/issue/' + issueKey + '/worklog',
+                        url: localStorage["jiraUrl"] + 'rest/api/2/issue/' + issueKey + '/worklog',
                         contentType: 'application/json',
                         success: function(data, status, jqXHR) {
                             callback.call(this, data.worklogs);
