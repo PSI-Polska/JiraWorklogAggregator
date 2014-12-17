@@ -38,12 +38,12 @@ function getJiraLogin(callback) {
     console.log("checking...");
     var jiraStatus = new Object();
     $.ajax({
-        url: jiraUrl + 'rest/api/2/serverInfo',
+        url: localStorage["jiraUrl"] + 'rest/api/2/serverInfo',
         contentType: 'application/json',
         success: function(data, status, jqXHR) {
             jiraStatus.connected = true;
             $.ajax({
-                url: jiraUrl + 'rest/auth/1/session',
+                url: localStorage["jiraUrl"] + 'rest/auth/1/session',
                 contentType: 'application/json',
                 success: function(data, status, jqXHR) {
                     $.ajax({
@@ -132,7 +132,7 @@ function getHoursForUser(callback) {
         url: jiraUrl + 'rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
-        data: '{"jql" : "project=' + projectKey + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
+        data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
         success: function(data, status, jqXHR) {
             console.log('success');
             processResponse(data, function(map) {

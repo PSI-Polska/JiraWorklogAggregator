@@ -1,8 +1,7 @@
 if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
     $(document).ready(function() {
         if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
-            $('#tt_single_table_info').append('<dl id="jiraWorklogAggregatorEpic"></dl>')
-            $('#jiraWorklogAggregatorEpic').append('<dt id="tt_single_text_remain" class="tt_text" title="Remaining Estimate - 40h">Aggregated:</dt>')
+
         }
 
         function getIssueKey() {
@@ -11,9 +10,16 @@ if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
         }
 
         getIssueTree(function(issues) {
-            console.log(issues);
+		
+			$('#tt_single_table_info').append('<dl id="jiraWorklogAggregatorEpic"></dl>')
+			$('#jiraWorklogAggregatorEpic').append('<dt id="tt_single_text_remain" class="tt_text" title="Remaining Estimate - 40h">Aggregated:</dt>')
+		
+			var totalTimeSpent = 0;
+			issues.forEach(function(issue){
+				totalTimeSpent += issue.fields.timespent;
+			});
+			 $('#jiraWorklogAggregatorEpic').append('<dd id="tt_single_values_spent" class="tt_values" title="Time Spent - Not Specified">'+(totalTimeSpent)/3600+'h</dd>');
         });
-        console.log('EPIC!');
 
 
         function getIssueTree(callback) {
@@ -27,16 +33,24 @@ if (/http:\/\/jira-bld-ppl.psi.de:8080\/browse\//.test(document.URL)) {
 						(function(){
 						var arrayC = array;
 							getIssuesInEpic(function(issuesInEpic) {
+								if(issuesInEpic.length ===0){
+									callback(arrayC);
+								}
 								console.log(issuesInEpic.length);
 								for (var i = 0; i < issuesInEpic.length; i++) {
 									var issueInEpic = issuesInEpic[i];
 									arrayC.push(issueInEpic);
+									
+									var count = issuesInEpic.length;
+									
 									getSubtasks(issueInEpic, function(subtasks) {
 										for (var j = 0; j < subtasks.length; j++) {
 											var subtask = subtasks[j];
-											arrayC.push(subtask);
+											arrayC.push(subtask);										
 										}
-										if(i === issuesInEpic.length){
+										count--;
+										if(count==0)
+										{
 											callback(arrayC);
 										}
 									});
