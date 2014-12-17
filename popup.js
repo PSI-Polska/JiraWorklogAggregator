@@ -18,13 +18,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
         chrome.runtime.sendMessage({method:'getHoursForUsers'}, function(response){
         $('#loader').html(''); 
-                $('#logs').append('<table id="logsTable"></table>');
+		$('#logs').append('<table id="logsTable"></table>');
 
+       $('#logsTable').append('<tr><td>User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
+
+		
         for(var key in response){
             $('#logsTable').append('<tr id="'+key+'"></tr>');
             
             $('#'+key).append('<td class="columnName">'+ key +'</td>');
-            for(var i=0; i<6; i++){
+            for(var i=0; i<5; i++){
                 $('#'+key).append('<td class="columnDay columnDay'+i+'">'+ (getTotal(response[key][i])/3600) +'h</td>');
             }
         }
