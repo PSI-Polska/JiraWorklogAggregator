@@ -25,7 +25,7 @@ if (/http:\/\/jira-bld-ppl.psi.de:8080\/issues\//.test(document.URL)) {
 					{
 						var epicKey = $(tr).attr('data-issuekey');
 						getIssueTree(epicKey,function(issues){
-							$(tr).find('.aggregatetimespent').html((aggregate(issues)/3600) + "h");
+							$(tr).find('.aggregatetimespent').html((Math.round(aggregate(issues)/3600 * 100)/100) + "h");
 						});
 					}
 				}
