@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "Jira Worklog Aggregator",
-  "description": "Rozszerzenie umożliwia wyświetlenie spędzonego czasu w biurze. Czas pobierany jest z Entrance Loggera.",
+  "description": "Rozszerzenie umożliwia wyświetlanie zagregowanej informacji o godzinach przepracowanych przez zespół.",
   "short_name": "EntranceLog",
-  "version": "1.0.3",
+  "version": "0.0.1",
   "author": "Michał Bocian",
   "minimum_chrome_version": "28",
   
