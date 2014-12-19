@@ -3,7 +3,7 @@
   "name": "Jira Worklog Aggregator",
   "description": "Rozszerzenie umożliwia wyświetlanie zagregowanej informacji o godzinach przepracowanych przez zespół.",
   "short_name": "EntranceLog",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Michał Bocian",
   "minimum_chrome_version": "28",
   
