@@ -111,14 +111,23 @@
             method: 'getHoursForUsers'
         }, function(response) {
 
-
+            
+            var forEach = function(obj, func){
+                var arr = [];
+                for (key in obj)
+                    arr.push(key);
+                
+                arr.sort();
+                arr.forEach(func);
+            };
+            
             loadTime(function(data) {
-                for (key in data) {
+                forEach(data, function(key) {
                     buildEmptyRow(key);
                     for (var i = 0; i < 5; i++) {
                         $('#' + key + ' .columnDay' + i + ' .dp').html((data[key][i]==undefined ? 0 : data[key][i]) + 'h');
                     }
-                }
+                });
             });
 
             $('#loader').html('');
@@ -127,12 +136,12 @@
             $('#logsTable').append('<tr><td>User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
 
 
-            for (var key in response) {
+            forEach(response, function(key) {
 				buildEmptyRow(key);
 				for (var i = 0; i < 5; i++) {
 					$('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key][i])/3600) + 'h');
 				}
-            }
+            });
             
 
             function buildEmptyRow(username) {
