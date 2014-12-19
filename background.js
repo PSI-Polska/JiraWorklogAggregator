@@ -92,6 +92,13 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     }
 });
 
+function getDateOfWeekDay(day) {
+	var now = new Date();
+    var mondayDay = now.getDate() - now.getDay() + 1 + day;
+    var mondayDateWithTime = new Date(now.setDate(mondayDay));
+    var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+    return monday;
+}
 
 function setBadgeText(badgeText) {
     var details = {
@@ -113,17 +120,6 @@ function createInterval(callback, delay, factor, oldInterval) {
     clearInterval(oldInterval);
     return setInterval(callback, delay * factor);
 };
-
-// function install_notice() {
-//     if (localStorage.getItem('install_time'))
-//         return;
-
-//     var now = new Date().getTime();
-//     localStorage.setItem('install_time', now);
-//     chrome.tabs.create({url: "options.html"});
-// 	chrome.tabs.create({url: 'http://'+targetUrl+'/?m=PSIEntranceLogger&tab=0'});
-// 	alert('Proszę zaloguj się do DotProject w celu pobrania ID twojego użytkownika.');
-// }
 
 
 function getHoursForUser(callback) {
@@ -203,12 +199,4 @@ function getHoursForUser(callback) {
             console.log('fail');
         },
     });
-
-    function getDateOfWeekDay(day) {
-        var now = new Date();
-        var mondayDay = now.getDate() - now.getDay() + 1 + day;
-        var mondayDateWithTime = new Date(now.setDate(mondayDay));
-        var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
-        return monday;
-    }
 }

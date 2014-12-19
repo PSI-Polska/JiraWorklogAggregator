@@ -15,8 +15,11 @@
 
 
         function loadTime(callback) {
+			var mon = getDateOfWeekDay(0);
+			var fri = getDateOfWeekDay(4);
+			
             $.ajax({
-                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=20141215&log_end_date=20141219&log_userfilter=0&do_report=submit#',
+                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date='+mon.getFullYear()  + (mon.getMonth() + 1)  + mon.getDate()+'&log_end_date='+fri.getFullYear() +(fri.getMonth() + 1) + fri.getDate()+'&log_userfilter=0&do_report=submit#'	,
                 data: {},
                 success: function(data, status, jqXHR) {
                     var results = new Array();
@@ -53,6 +56,15 @@
                 },
                 dataType: 'html'
             });
+			
+			
+			function getDateOfWeekDay(day) {
+				var now = new Date();
+				var mondayDay = now.getDate() - now.getDay() + 1 + day;
+				var mondayDateWithTime = new Date(now.setDate(mondayDay));
+				var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+				return monday;
+			}
 
             function isDevelopmentOrDocumentationTask(td) {
                 return /Development|Documentation/.test($(td).html());
