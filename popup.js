@@ -107,6 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                 getHoursForUsers({
+					onProgress:function(){
+					},
 					onStartFetching : function(data){
 					},
 					

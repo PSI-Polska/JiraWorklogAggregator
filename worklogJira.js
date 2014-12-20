@@ -11,48 +11,37 @@ function getHoursForUsers(callback) {
         success: function(data, status, jqXHR) {
             console.log('success');
             callback.onStartFetching.call(this, data);
-            processResponse(data, function(map) {
-                var results = new Object();
-                for (var key in map) {
-                    var obj = map[key];
-                    results[key] = filterWorklogs(obj);
-                }
-                callback.onSuccess.call(this, results);
 
-                function filterWorklogs(list) {
-                    var worklogsInDays = new Object();
-                    for (var i = 0; i < 6; i++) {
-                        worklogsInDays[i] = filter(list, i);
-                    }
-                    return worklogsInDays;
-                }
+            retrieveWorklogsForIssues(data.issues, {
+                success: function(worklogs) {
 
-                function filter(list, dayOfWeek) {
-                    return list.filter(function(worklog) {
-                        return new Date(worklog.started) > getDateOfWeekDay(dayOfWeek) && new Date(worklog.started) < getDateOfWeekDay(dayOfWeek + 1);
+                    var worklogsPerUser = [];
+                    worklogs.filter(function(worklog) {
+                        return new Date(worklog.started) > monday && new Date(worklog.started) < saturday;
+                    }).forEach(function(worklog) {
+                        var worklogOwner = worklog.author.name;
+                        if (worklogsPerUser[worklogOwner] === undefined) {
+                            worklogsPerUser[worklogOwner] = [];
+                            worklogsPerUser[worklogOwner].getForDay = function(date) {
+                                return this.filter(function(worklog) {
+                                    return new Date(worklog.started) > new Date(date.setHours(0, 0, 0, 0)) && new Date(worklog.started) < new Date(date.setHours(23, 59, 59, 99));
+                                });
+                            };
+                        }
+                        worklogsPerUser[worklogOwner].push(worklog)
                     });
+                    console.log(worklogsPerUser['mcmil'].getForDay(addDays(new Date(), -2)));
+                },
+                error: function() {
+                    callback.error.call(this);
+                },
+                onFetch: function(issue, progress) {
+                    callback.onProgress.call(this, progress);
+                    console.log(progress);
                 }
             });
 
-            function processResponse(data, callback) {
-                var map = new Object();
-                var issuesCount = data.issues.length;
-                (function() {
-                    var mapC = map;
-                    var issuesCountC = issuesCount
-					retrieveWorklogsForIssues(data.issues,{success: function(worklogs){
-						console.log(worklogs);
-					},
-					error: function(){
-					},
-					onFetch: function(progress){
-					console.log(progress);
-					}
-					});
-                })()
-            }
-			
-			
+
         },
         error: function(data, status, error) {
             console.log('fail');
@@ -60,24 +49,28 @@ function getHoursForUsers(callback) {
     });
 }
 
+function processResponse(data, callback) {
+
+}
+
 function retrieveWorklogsForIssues(issueKeys, callback) {
-	var issuesLeft = issueKeys.length;
-	var results = [];
-	issueKeys.forEach(function(issueKey){
-		retrieveWorklogsForIssue(issueKey,{
-			success:function(issue,worklogs){
-				issuesLeft--;
-				callback.onFetch.call(this,(issueKeys.length-issuesLeft)/issueKeys.length,worklogs)
-				results=results.concat(worklogs);
-				if(issuesLeft==0){
-					callback.success.call(this,results);
-				}
-			},
-			error:function(data){
-				callback.onFetch.call(this,data)
-			}
-		});
-	});
+    var issuesLeft = issueKeys.length;
+    var results = [];
+    issueKeys.forEach(function(issueKey) {
+        retrieveWorklogsForIssue(issueKey, {
+            success: function(issue, worklogs) {
+                issuesLeft--;
+                callback.onFetch.call(this, issue, (issueKeys.length - issuesLeft) / issueKeys.length, worklogs)
+                results = results.concat(worklogs);
+                if (issuesLeft == 0) {
+                    callback.success.call(this, results);
+                }
+            },
+            error: function(data) {
+                callback.onFetch.call(this, data)
+            }
+        });
+    });
 }
 
 function retrieveWorklogsForIssue(issue, callback) {
@@ -85,14 +78,19 @@ function retrieveWorklogsForIssue(issue, callback) {
         url: localStorage["jiraUrl"] + 'rest/api/2/issue/' + issue.key + '/worklog',
         contentType: 'application/json',
         success: function(data, status, jqXHR) {
-            callback.success.call(this,issue, data.worklogs);
+            callback.success.call(this, issue, data.worklogs);
         },
         error: function(data, status, error) {
-            callback.error.call(this,issue, data);
+            callback.error.call(this, issue, data);
         },
     });
 }
 
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(date.getDate() + days);
+    return result;
+}
 
 function getDateOfWeekDay(day) {
     var now = new Date();
