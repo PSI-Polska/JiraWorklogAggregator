@@ -1,8 +1,8 @@
-﻿document.addEventListener('DOMContentLoaded', function() {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
     chrome.runtime.sendMessage({
         method: 'getJiraLogin'
-    }, function(response) {
+    }, function (response) {
         if (response.connected == false) {
             $('#message').append('Could not connect to Jira. <a href="options.html" target="_blank">[settings]</a>');
             return;
@@ -18,10 +18,10 @@
             $.ajax({
                 url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=20141215&log_end_date=20141219&log_userfilter=0&do_report=submit#',
                 data: {},
-                success: function(data, status, jqXHR) {
+                success: function (data, status, jqXHR) {
                     var results = new Array();
                     var table = $($(data).find('.tbl'));
-                    table.find('tr').each(function(tr) {
+                    table.find('tr').each(function (tr) {
                         var tds = $(this).find('td');
                         if (tds.length === 6) {
 
@@ -48,7 +48,7 @@
                     callback.call(this, results);
 
                 },
-                error: function(data, status, error) {
+                error: function (data, status, error) {
 
                 },
                 dataType: 'html'
@@ -88,23 +88,20 @@
         };
 
 
-
-
         $('#loader').html('<img src="img/ajax-loader.gif" />');
         $('#logsTable').remove();
 
 
-
         chrome.runtime.sendMessage({
             method: 'getHoursForUsers'
-        }, function(response) {
+        }, function (response) {
 
 
-            loadTime(function(data) {
+            loadTime(function (data) {
                 for (key in data) {
                     buildEmptyRow(key);
                     for (var i = 0; i < 5; i++) {
-                        $('#' + key + ' .columnDay' + i + ' .dp').html((data[key][i]==undefined ? 0 : data[key][i]) + 'h');
+                        $('#' + key + ' .columnDay' + i + ' .dp').html((data[key][i] == undefined ? 0 : data[key][i]) + 'h');
                     }
                 }
             });
@@ -116,20 +113,20 @@
 
 
             for (var key in response) {
-				buildEmptyRow(key);
-				for (var i = 0; i < 5; i++) {
-					$('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key][i])/3600) + 'h');
-				}
+                buildEmptyRow(key);
+                for (var i = 0; i < 5; i++) {
+                    $('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key][i]) / 3600) + 'h');
+                }
             }
-            
+
 
             function buildEmptyRow(username) {
                 if ($('#logsTable #' + username).length === 1) {
                     return;
                 }
                 $('#logsTable').append('<tr id="' + username + '"></tr>');
-                $('#' + username).append('<td class="columnName">'+username+'</td>');
-				
+                $('#' + username).append('<td class="columnName">' + username + '</td>');
+
                 for (var i = 0; i < 5; i++) {
                     $('#' + username).append('<td class="columnDay columnDay' + i + '"><div class="dp">0h</div><div class="jira">0h</div></td>');
                 }
@@ -139,7 +136,7 @@
 
             function getTotal(worklogs) {
                 var total = 0;
-                worklogs.forEach(function(worklog) {
+                worklogs.forEach(function (worklog) {
                     total += worklog.timeSpentSeconds;
                 });
                 return total;
