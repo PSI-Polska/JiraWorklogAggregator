@@ -1,4 +1,3 @@
-
 function getHoursForUsers(callback) {
     var monday = getDateOfWeekDay(0);
     var saturday = getDateOfWeekDay(5);
@@ -9,15 +8,16 @@ function getHoursForUsers(callback) {
         type: 'POST',
         contentType: 'application/json',
         data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate", "maxResults":1000 }',
-        success: function (data, status, jqXHR) {
+        success: function(data, status, jqXHR) {
             console.log('success');
-            processResponse(data, function (map) {
+            callback.onStartFetching.call(this, data);
+            processResponse(data, function(map) {
                 var results = new Object();
                 for (var key in map) {
                     var obj = map[key];
                     results[key] = filterWorklogs(obj);
                 }
-                callback.call(this, results);
+                callback.onSuccess.call(this, results);
 
                 function filterWorklogs(list) {
                     var worklogsInDays = new Object();
@@ -28,7 +28,7 @@ function getHoursForUsers(callback) {
                 }
 
                 function filter(list, dayOfWeek) {
-                    return list.filter(function (worklog) {
+                    return list.filter(function(worklog) {
                         return new Date(worklog.started) > getDateOfWeekDay(dayOfWeek) && new Date(worklog.started) < getDateOfWeekDay(dayOfWeek + 1);
                     });
                 }
@@ -37,46 +37,62 @@ function getHoursForUsers(callback) {
             function processResponse(data, callback) {
                 var map = new Object();
                 var issuesCount = data.issues.length;
-                (function () {
+                (function() {
                     var mapC = map;
                     var issuesCountC = issuesCount
-                    data.issues.forEach(function (entry) {
-                        (function () {
-                            retrieveWorklogs(entry.key, function (worklogs) {
-                                worklogs.forEach(function (worklog) {
-                                    if (mapC[worklog.author.name] == undefined) {
-                                        mapC[worklog.author.name] = new Array();
-                                    }
-                                    mapC[worklog.author.name].push(worklog);
-                                })
-                                issuesCountC = issuesCountC - 1;
-                                if (issuesCountC == 0) {
-                                    callback.call(this, mapC);
-                                }
-                            })
-                        })()
-                    });
+					retrieveWorklogsForIssues(data.issues,{success: function(worklogs){
+						console.log(worklogs);
+					},
+					error: function(){
+					},
+					onFetch: function(progress){
+					console.log(progress);
+					}
+					});
                 })()
-
-                function retrieveWorklogs(issueKey, callback) {
-                    $.ajax({
-                        url: localStorage["jiraUrl"] + 'rest/api/2/issue/' + issueKey + '/worklog',
-                        contentType: 'application/json',
-                        success: function (data, status, jqXHR) {
-                            callback.call(this, data.worklogs);
-                        },
-                        error: function (data, status, error) {
-                            console.log('fail');
-                        },
-                    });
-                }
             }
+			
+			
         },
-        error: function (data, status, error) {
+        error: function(data, status, error) {
             console.log('fail');
         },
     });
 }
+
+function retrieveWorklogsForIssues(issueKeys, callback) {
+	var issuesLeft = issueKeys.length;
+	var results = [];
+	issueKeys.forEach(function(issueKey){
+		retrieveWorklogsForIssue(issueKey,{
+			success:function(issue,worklogs){
+				issuesLeft--;
+				callback.onFetch.call(this,(issueKeys.length-issuesLeft)/issueKeys.length,worklogs)
+				results=results.concat(worklogs);
+				if(issuesLeft==0){
+					callback.success.call(this,results);
+				}
+			},
+			error:function(data){
+				callback.onFetch.call(this,data)
+			}
+		});
+	});
+}
+
+function retrieveWorklogsForIssue(issue, callback) {
+    $.ajax({
+        url: localStorage["jiraUrl"] + 'rest/api/2/issue/' + issue.key + '/worklog',
+        contentType: 'application/json',
+        success: function(data, status, jqXHR) {
+            callback.success.call(this,issue, data.worklogs);
+        },
+        error: function(data, status, error) {
+            callback.error.call(this,issue, data);
+        },
+    });
+}
+
 
 function getDateOfWeekDay(day) {
     var now = new Date();
