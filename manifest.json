@@ -1,42 +1,47 @@
 {
   "manifest_version": 2,
   "name": "Jira Worklog Aggregator",
-  "description": "Rozszerzenie umożliwia wyświetlenie spędzonego czasu w biurze. Czas pobierany jest z Entrance Loggera.",
+  "description": "Rozszerzenie umożliwia wyświetlanie zagregowanej informacji o godzinach przepracowanych przez zespół.",
   "short_name": "EntranceLog",
-  "version": "1.0.3",
+  "version": "0.0.4",
   "author": "Michał Bocian",
   "minimum_chrome_version": "28",
-  
-  "options_page" : "options.html",
-  
+  "options_page": "options.html",
   "icons": {
     "16": "img/icon_16.png",
-	"48": "img/icon_48.png",
+    "48": "img/icon_48.png",
     "128": "img/icon_128.png"
   },
   "background": {
-      "page": "background.html"
+    "page": "background.html"
   },
-  "content_scripts":[
+  "content_scripts": [
     {
-        "matches": ["http://*/*", "https://*/*"],
-        "js" : ["jquery-1.9.1.min.js", "popup.js", "jscolor.js","jira.js"]
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "jquery-1.9.1.min.js",
+        "popup.js",
+        "jscolor.js",
+        "jira.js"
+      ]
     }
   ],
   "browser_action": {
     "default_icon": "img/icon_48.png",
-	"default_title": "Jira Worklog Aggregator",
-	"default_popup": "popup.html"
+    "default_title": "Jira Worklog Aggregator",
+    "default_popup": "popup.html"
   },
-
   "permissions": [
-	"background",
-	"unlimitedStorage",
-    	"notifications",
-	"idle",
-	"http://dotproject.psipolska.com/*",
-	"http://dotproject.psi.pl/*",
-	"http://bocian-lenovo:2990/*",
-	"http://jira-bld-ppl.psi.de/*"
+    "background",
+    "unlimitedStorage",
+    "notifications",
+    "idle",
+    "http://dotproject.psipolska.com/*",
+    "http://dotproject.psi.pl/*",
+    "http://bocian-lenovo:2990/*",
+    "http://jira-bld-ppl.psi.de/*"
   ]
 }

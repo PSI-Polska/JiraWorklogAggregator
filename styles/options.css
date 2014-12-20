@@ -2,79 +2,80 @@ html {
 
 }
 
-body{
-	overflow-x: hidden;
-	font: 12px/12px 'Consolas',arial,sans-serif;
-	text-align: center;
-	margin: 0 auto;
+body {
+    overflow-x: hidden;
+    font: 12px/12px 'Consolas', arial, sans-serif;
+    text-align: center;
+    margin: 0 auto;
 }
 
 a {
-	color: #C26F27;
+    color: #C26F27;
 }
+
 a:hover {
-	color: #ED7E1C;
+    color: #ED7E1C;
 }
 
 #popupTimeout {
-	padding: 1px;
+    padding: 1px;
 }
 
-.test{
-	width: 15px;
-	background-repeat: no-repeat;
-	text-align: center;
-	background-position-y: 6px;
+.test {
+    width: 15px;
+    background-repeat: no-repeat;
+    text-align: center;
+    background-position-y: 6px;
 }
 
 #info {
-	margin: 10px 0px 10px 0px;
-	font-size: 14px;
-	height: 14px;
+    margin: 10px 0px 10px 0px;
+    font-size: 14px;
+    height: 14px;
 }
 
-.correct{
-	background-image: url('../img/correct.gif');
+.correct {
+    background-image: url('../img/correct.gif');
 }
 
-.wrong{
-		background-image: url('../img/wrong.gif');
+.wrong {
+    background-image: url('../img/wrong.gif');
 }
 
 .info {
-	font-size: 12px;
-	color: #C2AFAF;
+    font-size: 12px;
+    color: #C2AFAF;
 }
 
 .option {
-	margin: 5px;
+    margin: 5px;
 }
 
 .optionsTable {
-	margin: 0px auto;
+    margin: 0px auto;
 }
 
 .saveinfo {
-	min-height: 15px;
-	margin: 10px 0px 10px 0px;
+    min-height: 15px;
+    margin: 10px 0px 10px 0px;
 }
 
 #donate {
-	margin: 30px 0px 0px 0px;
+    margin: 30px 0px 0px 0px;
 }
 
 table {
-	text-align: left;
+    text-align: left;
 }
 
-table th{
-	text-align: center;
+table th {
+    text-align: center;
 }
 
 table td.value {
-	text-align: center;
+    text-align: center;
 }
 
 img {
-	vertical-align: -8px;
+    vertical-align: -8px;
 }

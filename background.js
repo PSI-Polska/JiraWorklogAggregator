@@ -1,3 +1,18 @@
+/* GENERAL */
+var currTime = -1;
+var loggedIn = undefined;
+var onClickListenerRegistered = false;
+
+/* OPTIONS (default values or from local storage)*/
+var userID = (localStorage["userID"] === undefined) ? -1 : localStorage["userID"];
+;
+var popupTimeout = (localStorage["popupTimeout"] === undefined) ? 10 : localStorage["popupTimeout"];
+var requestTimeout = (localStorage["requestTimeout"] === undefined) ? 1 : localStorage["requestTimeout"];
+var badgeColor = (localStorage["badgeColor"] === undefined) ? '#6B4F4F' : localStorage["badgeColor"];
+var targetUrl = 'dotproject.psi.pl';
+var showPopup = (localStorage["showPopup"] === undefined) ? true : localStorage["showPopup"];
+var revertTime = (localStorage["revertTime"] === undefined) ? false : localStorage["revertTime"];
+var playGoHome = (localStorage["playGoHome"] === undefined) ? false : localStorage["playGoHome"];
 var jiraUrl = localStorage["jiraUrl"]
 var projectKey = localStorage["projectKey"]
 
@@ -38,12 +53,12 @@ function getJiraLogin(callback) {
                         },
                         error: function (data, status, error) {
                             callback.call(this, jiraStatus);
-                        }
+                        },
                     })
                 },
                 error: function (data, status, error) {
                     callback.call(this, jiraStatus);
-                }
+                },
             })
         },
         error: function (data, status, error) {
@@ -74,6 +89,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 });
 
+function getDateOfWeekDay(day) {
+    var now = new Date();
+    var mondayDay = now.getDate() - now.getDay() + 1 + day;
+    var mondayDateWithTime = new Date(now.setDate(mondayDay));
+    var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+    return monday;
+}
 
 function setBadgeText(badgeText) {
     var details = {
@@ -95,6 +117,7 @@ function createInterval(callback, delay, factor, oldInterval) {
     return setInterval(callback, delay * factor);
 };
 
+
 function getHoursForUser(callback) {
     var monday = getDateOfWeekDay(0);
     var saturday = getDateOfWeekDay(5);
@@ -104,7 +127,7 @@ function getHoursForUser(callback) {
         url: localStorage["jiraUrl"] + 'rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
-        data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate" }',
+        data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate", "maxResults":1000 }',
         success: function (data, status, jqXHR) {
             console.log('success');
             processResponse(data, function (map) {
@@ -135,7 +158,7 @@ function getHoursForUser(callback) {
                 var issuesCount = data.issues.length;
                 (function () {
                     var mapC = map;
-                    var issuesCountC = issuesCount;
+                    var issuesCountC = issuesCount
                     data.issues.forEach(function (entry) {
                         (function () {
                             retrieveWorklogs(entry.key, function (worklogs) {
@@ -163,21 +186,13 @@ function getHoursForUser(callback) {
                         },
                         error: function (data, status, error) {
                             console.log('fail');
-                        }
+                        },
                     });
                 }
             }
         },
         error: function (data, status, error) {
             console.log('fail');
-        }
+        },
     });
-
-    function getDateOfWeekDay(day) {
-        var now = new Date();
-        var mondayDay = now.getDate() - now.getDay() + 1 + day;
-        var mondayDateWithTime = new Date(now.setDate(mondayDay));
-        var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
-        return monday;
-    }
 }

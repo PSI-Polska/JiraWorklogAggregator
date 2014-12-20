@@ -1,4 +1,5 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+﻿﻿
+document.addEventListener('DOMContentLoaded', function () {
 
     chrome.runtime.sendMessage({
         method: 'getJiraLogin'
@@ -15,8 +16,11 @@
 
 
         function loadTime(callback) {
+            var mon = getDateOfWeekDay(0);
+            var fri = getDateOfWeekDay(4);
+
             $.ajax({
-                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=20141215&log_end_date=20141219&log_userfilter=0&do_report=submit#',
+                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=' + mon.getFullYear() + (mon.getMonth() + 1) + mon.getDate() + '&log_end_date=' + fri.getFullYear() + (fri.getMonth() + 1) + fri.getDate() + '&log_userfilter=0&do_report=submit#',
                 data: {},
                 success: function (data, status, jqXHR) {
                     var results = new Array();
@@ -53,6 +57,15 @@
                 },
                 dataType: 'html'
             });
+
+
+            function getDateOfWeekDay(day) {
+                var now = new Date();
+                var mondayDay = now.getDate() - now.getDay() + 1 + day;
+                var mondayDateWithTime = new Date(now.setDate(mondayDay));
+                var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
+                return monday;
+            }
 
             function isDevelopmentOrDocumentationTask(td) {
                 return /Development|Documentation/.test($(td).html());
@@ -97,13 +110,22 @@
         }, function (response) {
 
 
+            var forEach = function (obj, func) {
+                var arr = [];
+                for (key in obj)
+                    arr.push(key);
+
+                arr.sort();
+                arr.forEach(func);
+            };
+
             loadTime(function (data) {
-                for (key in data) {
+                forEach(data, function (key) {
                     buildEmptyRow(key);
                     for (var i = 0; i < 5; i++) {
                         $('#' + key + ' .columnDay' + i + ' .dp').html((data[key][i] == undefined ? 0 : data[key][i]) + 'h');
                     }
-                }
+                });
             });
 
             $('#loader').html('');
@@ -112,12 +134,12 @@
             $('#logsTable').append('<tr><td>User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
 
 
-            for (var key in response) {
+            forEach(response, function (key) {
                 buildEmptyRow(key);
                 for (var i = 0; i < 5; i++) {
                     $('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key][i]) / 3600) + 'h');
                 }
-            }
+            });
 
 
             function buildEmptyRow(username) {
