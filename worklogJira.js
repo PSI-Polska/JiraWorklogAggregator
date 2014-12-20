@@ -1,8 +1,7 @@
-function getHoursForUsers(callback) {
-    var monday = getDateOfWeekDay(0);
-    var saturday = getDateOfWeekDay(5);
-    var mondayString = monday.getFullYear() + '/' + (monday.getMonth() + 1) + '/' + monday.getDate()
-    var saturdayString = saturday.getFullYear() + '/' + (saturday.getMonth() + 1) + '/' + saturday.getDate()
+function getHoursForUsers(startDay, endDay, callback) {
+	endDay=addDays(endDay,1)
+    var mondayString = startDay.getFullYear() + '/' + (startDay.getMonth() + 1) + '/' + startDay.getDate()
+    var saturdayString = endDay.getFullYear() + '/' + (endDay.getMonth() + 1) + '/' + endDay.getDate()
     $.ajax({
         url: localStorage["jiraUrl"] + 'rest/api/2/search',
         type: 'POST',
@@ -14,10 +13,9 @@ function getHoursForUsers(callback) {
 
             retrieveWorklogsForIssues(data.issues, {
                 success: function(worklogs) {
-
                     var worklogsPerUser = [];
                     worklogs.filter(function(worklog) {
-                        return new Date(worklog.started) > monday && new Date(worklog.started) < saturday;
+                        return new Date(worklog.started) > startDay && new Date(worklog.started) < endDay;
                     }).forEach(function(worklog) {
                         var worklogOwner = worklog.author.name;
                         if (worklogsPerUser[worklogOwner] === undefined) {
@@ -30,19 +28,15 @@ function getHoursForUsers(callback) {
                         }
                         worklogsPerUser[worklogOwner].push(worklog)
                     });
-                    console.log(worklogsPerUser['mcmil'].getForDay(addDays(new Date(), -2)));
+					callback.onSuccess(worklogsPerUser);
                 },
                 error: function() {
                     callback.error.call(this);
                 },
                 onFetch: function(issue, progress) {
                     callback.onProgress.call(this, progress);
-                    console.log(progress);
                 }
-            });
-
-
-        },
+            });},
         error: function(data, status, error) {
             console.log('fail');
         },
@@ -92,10 +86,9 @@ function addDays(date, days) {
     return result;
 }
 
-function getDateOfWeekDay(day) {
-    var now = new Date();
-    var mondayDay = now.getDate() - now.getDay() + 1 + day;
-    var mondayDateWithTime = new Date(now.setDate(mondayDay));
+function getDateOfWeekDay(ref,day) {
+    var mondayDay = ref.getDate() - ref.getDay() + 1 + day;
+    var mondayDateWithTime = new Date(ref.setDate(mondayDay));
     var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
     return monday;
 }
