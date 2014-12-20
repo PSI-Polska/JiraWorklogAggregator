@@ -105,9 +105,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#logsTable').remove();
 
 
-        chrome.runtime.sendMessage({
-            method: 'getHoursForUsers'
-        }, function (response) {
+        
+        getHoursForUsers(function (response) {
 
 
             var forEach = function (obj, func) {
