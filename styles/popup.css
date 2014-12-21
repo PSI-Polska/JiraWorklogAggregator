@@ -202,3 +202,53 @@ hr {
 .CSSTableGenerator tr:first-child td:last-child {
     border-width: 0px 0px 1px 1px;
 }
+
+            .progress {
+                height: 80px;
+                width: 80px;
+                margin: 50px auto;
+            }
+            .progress > svg {
+                height: 100%;
+                display: block;
+            }
+            @keyframes rotating {
+              from {
+                transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -webkit-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -webkit-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+              }
+            }
+            @-webkit-keyframes rotating /* Safari and Chrome */ {
+              from {
+                transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -webkit-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -webkit-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+              }
+            }
+            .rotating {
+              -webkit-animation: rotating 2s linear infinite;
+              -moz-animation: rotating 2s linear infinite;
+              -ms-animation: rotating 2s linear infinite;
+              -o-animation: rotating 2s linear infinite;
+              animation: rotating 2s linear infinite;
+              transform-origin: 50% 50%;
+            }

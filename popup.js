@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        $('#loader').hide();
-        $("#progressbar").progressbar();
+
 
 
         function loadTime(callback) {
@@ -104,16 +103,25 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         $('#logsTable').remove();
 
+        var circle = new ProgressBar.Circle('#progress', {
+            color: '#555',
+            trailColor: '#eee',
+            strokeWidth: 10,
+            duration: 10,
+            easing: 'easeInOut'
+        });
+        circle.set(0.05);
 
-        getHoursForUsers(getDateOfWeekDay(new Date(), 0), getDateOfWeekDay(new Date(), 4), {
+
+
+        var startDay = getDateOfWeekDay(addDays(new Date(), -4), 0);
+        var endDay = getDateOfWeekDay(addDays(new Date(), -4), 4);
+        getHoursForUsers(startDay, endDay, {
             onProgress: function(progress) {
-                $("#progressbar").progressbar({
-                    value: progress * 100
-                });
-
+                circle.animate(progress);
             },
             onStartFetching: function(data) {
-                $("#progressbar").show();
+
             },
 
             onSuccess: function(response) {
@@ -146,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 forEach(response, function(key) {
                     buildEmptyRow(key);
                     for (var i = 0; i < 5; i++) {
-                        $('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key][i]) / 3600) + 'h');
+                        $('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key].getForDay(addDays(startDay, i))) / 3600) + 'h');
                     }
                 });
 
