@@ -1,5 +1,5 @@
 function getHoursForUsers(startDay, endDay, callback) {
-	endDay=addDays(endDay,1)
+    endDay = addDays(endDay, 1)
     var mondayString = startDay.getFullYear() + '/' + (startDay.getMonth() + 1) + '/' + startDay.getDate()
     var saturdayString = endDay.getFullYear() + '/' + (endDay.getMonth() + 1) + '/' + endDay.getDate()
     $.ajax({
@@ -28,7 +28,7 @@ function getHoursForUsers(startDay, endDay, callback) {
                         }
                         worklogsPerUser[worklogOwner].push(worklog)
                     });
-					callback.onSuccess(worklogsPerUser);
+                    callback.onSuccess(worklogsPerUser);
                 },
                 error: function() {
                     callback.error.call(this);
@@ -36,19 +36,20 @@ function getHoursForUsers(startDay, endDay, callback) {
                 onFetch: function(issue, progress) {
                     callback.onProgress.call(this, progress);
                 }
-            });},
+            });
+        },
         error: function(data, status, error) {
             console.log('fail');
         },
     });
 }
 
-function processResponse(data, callback) {
-
-}
 
 function retrieveWorklogsForIssues(issueKeys, callback) {
     var issuesLeft = issueKeys.length;
+    if (issuesLeft === 0) {
+        callback.success.call(this, []);
+    }
     var results = [];
     issueKeys.forEach(function(issueKey) {
         retrieveWorklogsForIssue(issueKey, {
@@ -86,7 +87,7 @@ function addDays(date, days) {
     return result;
 }
 
-function getDateOfWeekDay(ref,day) {
+function getDateOfWeekDay(ref, day) {
     var mondayDay = ref.getDate() - ref.getDay() + 1 + day;
     var mondayDateWithTime = new Date(ref.setDate(mondayDay));
     var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());

@@ -1,7 +1,7 @@
         function getTimeFromDotProject(start, end, callback) {
 
             $.ajax({
-                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=' + start.getFullYear() + ((start.getMonth() + 1)<10?'0'+(start.getMonth() + 1):(start.getMonth() + 1)) + (start.getDate()<10?'0'+start.getDate():start.getDate()) + '&log_end_date=' + end.getFullYear() + ((end.getMonth() + 1)<10?'0'+(end.getMonth() + 1):(end.getMonth() + 1)) + (end.getDate()<10?'0'+end.getDate():end.getDate()) + '&log_userfilter=0&do_report=submit#',
+                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=' + start.getFullYear() + ((start.getMonth() + 1) < 10 ? '0' + (start.getMonth() + 1) : (start.getMonth() + 1)) + (start.getDate() < 10 ? '0' + start.getDate() : start.getDate()) + '&log_end_date=' + end.getFullYear() + ((end.getMonth() + 1) < 10 ? '0' + (end.getMonth() + 1) : (end.getMonth() + 1)) + (end.getDate() < 10 ? '0' + end.getDate() : end.getDate()) + '&log_userfilter=0&do_report=submit#',
                 data: {},
                 success: function(data, status, jqXHR) {
                     var results = new Array();
@@ -34,7 +34,7 @@
 
                 },
                 error: function(data, status, error) {
-					callback.error.call(this,data);
+                    callback.error.call(this, data);
                 },
                 dataType: 'html'
             });

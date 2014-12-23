@@ -14,22 +14,24 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-		
-		
-		var shiftWeek =function(shift) {
-            startDay = getDateOfWeekDay(addDays(startDay, shift*7), 0);
-            endDay = getDateOfWeekDay(addDays(endDay, shift*7), 4);
+
+
+        var shiftWeek = function(shift) {
+            startDay = getDateOfWeekDay(addDays(startDay, shift * 7), 0);
+            endDay = getDateOfWeekDay(addDays(endDay, shift * 7), 4);
 
             $('#logsTable').slideUp({
                 complete: function() {
-                    $('#progress').slideDown({complete: function(){
-					$('#logsTable').remove();
-					}});
+                    $('#progress').slideDown({
+                        complete: function() {
+                            $('#logsTable').remove();
+                        }
+                    });
 
                     circle.animate(0.05);
                     getTable(startDay, endDay, {
                         success: function(data) {
-                            drawTable(data);
+                            drawTable(startDay, endDay, data);
                             $('#progress').slideUp({
                                 complete: function() {
                                     $('#logsTable').slideDown();
@@ -43,12 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-		
-		
-		$('#next-button').click(function(){(shiftWeek(1))});
-		$('#prev-button').click(function(){(shiftWeek(-1))});
 
-		
+
+        $('#next-button').click(function() {
+            (shiftWeek(1))
+        });
+        $('#prev-button').click(function() {
+            (shiftWeek(-1))
+        });
+
+
         var circle = new ProgressBar.Circle('#progress', {
             color: '#555',
             trailColor: '#eee',
@@ -64,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         circle.animate(0.05);
         getTable(startDay, endDay, {
             success: function(data) {
-                drawTable(data);
+                drawTable(startDay, endDay, data);
                 $('#progress').slideUp({
                     complete: function() {
                         $('#logsTable').slideDown();
@@ -78,9 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function drawTable(tableData) {
+function drawTable(startDay, endDay, tableData) {
     $('#logs').append('<table id="logsTable" style="display: none"></table>');
-    $('#logsTable').append('<tr><td colspan="2">User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
+    $('#logsTable').append('<tr><td colspan="2" rowspan="2">User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
+    $('#logsTable').append('<tr><td>' + addDays(startDay, 0).format('dd/mm') + '</td><td>' + addDays(startDay, 1).format('dd/mm') + '</td><td>' + addDays(startDay, 2).format('dd/mm') + '</td><td>' + addDays(startDay, 3).format('dd/mm') + '</td><td>' + addDays(startDay, 4).format('dd/mm') + '</td></tr>');
+
 
     for (var key in tableData) {
         $('#logsTable').append('<tr id="' + key + '-row-jira"><td rowspan="2" class="' + key + '-cell">' + key + '</td></tr>');
