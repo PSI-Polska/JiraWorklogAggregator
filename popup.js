@@ -17,9 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         var shiftWeek = function(shift) {
-            startDay = getDateOfWeekDay(addDays(startDay, shift * 7), 0);
-            endDay = getDateOfWeekDay(addDays(endDay, shift * 7), 4);
-
+			if(shift == 0){
+				startDay = getDateOfWeekDay(new Date(), 0);
+				endDay = getDateOfWeekDay(new Date(), 4);
+			}else{
+				startDay = getDateOfWeekDay(addDays(startDay, shift * 7), 0);
+				endDay = getDateOfWeekDay(addDays(endDay, shift * 7), 4);
+			}
+			$('#nav').slideUp();
             $('#logsTable').slideUp({
                 complete: function() {
                     $('#progress').slideDown({
@@ -35,6 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             $('#progress').slideUp({
                                 complete: function() {
                                     $('#logsTable').slideDown();
+									$('#nav').slideDown();
+
                                 }
                             });
                         },
@@ -53,7 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#prev-button').click(function() {
             (shiftWeek(-1))
         });
-
+        $('#now-button').click(function() {
+            (shiftWeek(0))
+        });
 
         var circle = new ProgressBar.Circle('#progress', {
             color: '#555',
@@ -74,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#progress').slideUp({
                     complete: function() {
                         $('#logsTable').slideDown();
+						$('#nav').slideDown();
                     }
                 });
             },
