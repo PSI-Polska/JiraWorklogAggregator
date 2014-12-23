@@ -6,7 +6,7 @@ function getHoursForUsers(startDay, endDay, callback) {
         url: localStorage["jiraUrl"] + 'rest/api/2/search',
         type: 'POST',
         contentType: 'application/json',
-        data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' and updatedDate < \'' + saturdayString + '\' ORDER BY updatedDate", "maxResults":1000 }',
+        data: '{"jql" : "project=' + localStorage["projectKey"] + ' and updatedDate > \'' + mondayString + '\' ORDER BY updatedDate", "maxResults":1000 }',
         success: function(data, status, jqXHR) {
             console.log('success');
             callback.onStartFetching.call(this, data);

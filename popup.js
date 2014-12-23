@@ -14,95 +14,41 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+		
+		
+		var shiftWeek =function(shift) {
+            startDay = getDateOfWeekDay(addDays(startDay, shift*7), 0);
+            endDay = getDateOfWeekDay(addDays(endDay, shift*7), 4);
 
+            $('#logsTable').slideUp({
+                complete: function() {
+                    $('#progress').slideDown({complete: function(){
+					$('#logsTable').remove();
+					}});
 
-
-        function loadTime(callback) {
-            var mon = getDateOfWeekDay(0);
-            var fri = getDateOfWeekDay(4);
-
-            $.ajax({
-                url: 'http://dotproject.psi.pl/index.php?m=projects&a=reports&project_id=399&report_type=userlogsaggrpertask&log_start_date=' + mon.getFullYear() + (mon.getMonth() + 1) + mon.getDate() + '&log_end_date=' + fri.getFullYear() + (fri.getMonth() + 1) + fri.getDate() + '&log_userfilter=0&do_report=submit#',
-                data: {},
-                success: function(data, status, jqXHR) {
-                    var results = new Array();
-                    var table = $($(data).find('.tbl'));
-                    table.find('tr').each(function(tr) {
-                        var tds = $(this).find('td');
-                        if (tds.length === 6) {
-
-                            if (isDevelopmentOrDocumentationTask(tds[2])) {
-
-                                var username = getUniqueUserName($(tds[0]).html());
-                                if (results[username] == undefined) {
-                                    results[username] = new Array();
+                    circle.animate(0.05);
+                    getTable(startDay, endDay, {
+                        success: function(data) {
+                            drawTable(data);
+                            $('#progress').slideUp({
+                                complete: function() {
+                                    $('#logsTable').slideDown();
                                 }
-                                var date = getDate(tds[4]);
-                                var entry = getEntry(tds[5]);
-
-                                if (results[username][date.getDay() - 1] == undefined) {
-
-                                    results[username][date.getDay() - 1] = entry
-                                } else {
-
-                                    results[username][date.getDay() - 1] += entry
-                                }
-                            }
+                            });
+                        },
+                        onProgress: function(progress) {
+                            circle.animate(progress);
                         }
                     });
-
-                    callback.call(this, results);
-
-                },
-                error: function(data, status, error) {
-
-                },
-                dataType: 'html'
-            });
-
-
-            function getDateOfWeekDay(day) {
-                var now = new Date();
-                var mondayDay = now.getDate() - now.getDay() + 1 + day;
-                var mondayDateWithTime = new Date(now.setDate(mondayDay));
-                var monday = new Date(mondayDateWithTime.getFullYear(), mondayDateWithTime.getMonth(), mondayDateWithTime.getDate());
-                return monday;
-            }
-
-            function isDevelopmentOrDocumentationTask(td) {
-                return /Development|Documentation/.test($(td).html());
-            }
-
-            function getEntry(td) {
-                return parseFloat($(td).html());
-            }
-
-            function getDate(td) {
-                var test = $(td).html().split('/')
-                return new Date(test[2], test[1] - 1, test[0])
-            }
-
-            function getUniqueUserName(username) {
-                switch (username) {
-                    case 'Bocian Michał':
-                        return 'mbocian';
-                    case 'Ćmil Michał':
-                        return 'mcmil';
-                    case 'Ostrowski Piotr':
-                        return 'postrowski';
-                    case 'Jaroszewicz Adrian':
-                        return 'ajaroszewicz';
-                    case 'Drąg Łukasz':
-                        return 'ldrag';
-                    case 'Becela Piotr':
-                        return 'pbecela';
-                    case 'Robakowski Przemko':
-                        return 'probakowski';
                 }
-            }
-        };
-        $('#logsTable').remove();
+            });
+        }
+		
+		
+		$('#next-button').click(function(){(shiftWeek(1))});
+		$('#prev-button').click(function(){(shiftWeek(-1))});
 
+		
         var circle = new ProgressBar.Circle('#progress', {
             color: '#555',
             trailColor: '#eee',
@@ -112,74 +58,121 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         circle.set(0.05);
 
+        var startDay = getDateOfWeekDay(new Date(), 0);
+        var endDay = getDateOfWeekDay(new Date(), 4);
 
-
-        var startDay = getDateOfWeekDay(addDays(new Date(), -4), 0);
-        var endDay = getDateOfWeekDay(addDays(new Date(), -4), 4);
-        getHoursForUsers(startDay, endDay, {
+        circle.animate(0.05);
+        getTable(startDay, endDay, {
+            success: function(data) {
+                drawTable(data);
+                $('#progress').slideUp({
+                    complete: function() {
+                        $('#logsTable').slideDown();
+                    }
+                });
+            },
             onProgress: function(progress) {
                 circle.animate(progress);
-            },
-            onStartFetching: function(data) {
-
-            },
-
-            onSuccess: function(response) {
-                $("#progressbar").hide();
-
-                var forEach = function(obj, func) {
-                    var arr = [];
-                    for (key in obj)
-                        arr.push(key);
-
-                    arr.sort();
-                    arr.forEach(func);
-                };
-
-                loadTime(function(data) {
-                    forEach(data, function(key) {
-                        buildEmptyRow(key);
-                        for (var i = 0; i < 5; i++) {
-                            $('#' + key + ' .columnDay' + i + ' .dp').html((data[key][i] == undefined ? 0 : data[key][i]) + 'h');
-                        }
-                    });
-                });
-
-                $('#loader').html('');
-                $('#logs').append('<table id="logsTable"></table>');
-
-                $('#logsTable').append('<tr><td>User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
-
-
-                forEach(response, function(key) {
-                    buildEmptyRow(key);
-                    for (var i = 0; i < 5; i++) {
-                        $('#' + key + ' .columnDay' + i + ' .jira').html((getTotal(response[key].getForDay(addDays(startDay, i))) / 3600) + 'h');
-                    }
-                });
-
-
-                function buildEmptyRow(username) {
-                    if ($('#logsTable #' + username).length === 1) {
-                        return;
-                    }
-                    $('#logsTable').append('<tr id="' + username + '"></tr>');
-                    $('#' + username).append('<td class="columnName">' + username + '</td>');
-
-                    for (var i = 0; i < 5; i++) {
-                        $('#' + username).append('<td class="columnDay columnDay' + i + '"><div class="dp">0h</div><div class="jira">0h</div></td>');
-                    }
-
-                }
-
-                function getTotal(worklogs) {
-                    var total = 0;
-                    worklogs.forEach(function(worklog) {
-                        total += worklog.timeSpentSeconds;
-                    });
-                    return total;
-                }
             }
         });
     });
 });
+
+function drawTable(tableData) {
+    $('#logs').append('<table id="logsTable" style="display: none"></table>');
+    $('#logsTable').append('<tr><td colspan="2">User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
+
+    for (var key in tableData) {
+        $('#logsTable').append('<tr id="' + key + '-row-jira"><td rowspan="2" class="' + key + '-cell">' + key + '</td></tr>');
+        $('#logsTable').append('<tr id="' + key + '-row-dp">');
+
+        $('#' + key + '-row-jira').append('<td>j</td>');
+        $('#' + key + '-row-dp').append('<td>dp</td>');
+
+
+        for (var i = 0; i < 5; i++) {
+
+            $('#' + key + '-row-jira').append('<td class="columnDay columnDay' + i + '"><div class="jira">' + (tableData[key][i]['jira'] === undefined ? 0 : tableData[key][i]['jira']).toFixed(1) + 'h</div>');
+            $('#' + key + '-row-dp').append('<td class="columnDay columnDay' + i + '"><div class="dp">' + (tableData[key][i]['dp'] === undefined ? 0 : tableData[key][i]['dp']).toFixed(1) + 'h</div>');
+        }
+    }
+}
+
+function getTable(startDay, endDay, callback) {
+
+    var dpCompleted = false;
+    var jiraCompleted = false;
+
+    var tableData = [];
+
+    function partCompleted() {
+        if (jiraCompleted && dpCompleted) {
+            callback.success.call(this, tableData)
+        }
+    }
+
+    getTimeFromDotProject(startDay, endDay, {
+        success: function(data) {
+            for (var key in data) {
+                if (tableData[key] === undefined) {
+                    tableData[key] = [];
+                }
+                for (var i = 0; i < 5; i++) {
+                    if (tableData[key][i] === undefined) {
+                        tableData[key][i] = [];
+                    }
+                    tableData[key][i]['dp'] = data[key][i] === undefined ? 0 : data[key][i];
+                }
+            }
+            dpCompleted = true;
+            partCompleted();
+        },
+        error: function(data) {
+            alert(data);
+        }
+    });
+
+    getHoursForUsers(startDay, endDay, {
+        onProgress: function(progress) {
+            callback.onProgress.call(this, progress);
+        },
+        onStartFetching: function(data) {
+
+        },
+
+        onSuccess: function(response) {
+
+            for (key in response) {
+                if (tableData[key] === undefined) {
+                    tableData[key] = [];
+                }
+                for (var i = 0; i < 5; i++) {
+                    if (tableData[key][i] === undefined) {
+                        tableData[key][i] = [];
+                    }
+                    tableData[key][i]['jira'] = getTotal(response[key].getForDay(addDays(startDay, i))) / 3600;
+                }
+            }
+
+            function getTotal(worklogs) {
+                var total = 0;
+                worklogs.forEach(function(worklog) {
+                    total += worklog.timeSpentSeconds;
+                });
+                return total;
+            }
+
+            var forEach = function(obj, func) {
+                var arr = [];
+                for (key in obj)
+                    arr.push(key);
+
+                arr.sort();
+                arr.forEach(func);
+            };
+
+            jiraCompleted = true;
+            partCompleted();
+        }
+    });
+}

@@ -7,15 +7,21 @@
 
     <script src="jquery-1.9.1.min.js"></script>
     <script src="worklogJira.js"></script>
+	    <script src="dotProject.js"></script>
+
     <script src="popup.js"></script>
 	  <script src="progressbar.min.js"></script>
 
 
 </head>
 <body>
-        <div class="rotating progress" id="progress"></div>
 
 <div id="message"></div>
-<div id="logs" class="CSSTableGenerator" title="Logi"></div>
+<div id='nav'>
+<a href="#" id="prev-button">prev</a><a href="#" id="next-button">next</a>
+</div>
+<div id="logs" class="CSSTableGenerator" title="Logi">
+        <div class="rotating progress" id="progress"></div>
+</div>
 </body>
 </html>
