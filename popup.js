@@ -99,8 +99,7 @@ function drawTable(startDay, endDay, tableData) {
     $('#logsTable').append('<tr><td colspan="2" rowspan="2">User</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thur</td><td>Fri</td></tr>');
     $('#logsTable').append('<tr><td>' + addDays(startDay, 0).format('dd/mm') + '</td><td>' + addDays(startDay, 1).format('dd/mm') + '</td><td>' + addDays(startDay, 2).format('dd/mm') + '</td><td>' + addDays(startDay, 3).format('dd/mm') + '</td><td>' + addDays(startDay, 4).format('dd/mm') + '</td></tr>');
 
-
-    for (var key in tableData) {
+    Object.keys(tableData).sort().forEach(function(key) {
         $('#logsTable').append('<tr id="' + key + '-row-jira"><td rowspan="2" class="' + key + '-cell">' + key + '</td></tr>');
         $('#logsTable').append('<tr id="' + key + '-row-dp">');
 
@@ -109,11 +108,15 @@ function drawTable(startDay, endDay, tableData) {
 
 
         for (var i = 0; i < 5; i++) {
-
             $('#' + key + '-row-jira').append('<td class="columnDay columnDay' + i + '"><div class="jira">' + (tableData[key][i]['jira'] === undefined ? 0 : tableData[key][i]['jira']).toFixed(1) + 'h</div>');
             $('#' + key + '-row-dp').append('<td class="columnDay columnDay' + i + '"><div class="dp">' + (tableData[key][i]['dp'] === undefined ? 0 : tableData[key][i]['dp']).toFixed(1) + 'h</div>');
+			
+			if(Math.abs(tableData[key][i]['jira'] - tableData[key][i]['dp'])>=0.5){
+				$('#' + key + '-row-jira .columnDay' + i).addClass('warning');
+				$('#' + key + '-row-dp .columnDay' + i).addClass('warning');
+			}
         }
-    }
+    });
 }
 
 function getTable(startDay, endDay, callback) {
