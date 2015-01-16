@@ -7,6 +7,8 @@
     var playGoHome = localStorage["playGoHome"];
     var jiraUrl = localStorage["jiraUrl"];
     var projectKey = localStorage["projectKey"];
+	var dpProjectKey = localStorage["dpProjectKey"]
+	var dpTaskRegexp = localStorage["dpTaskRegexp"]
 
 
     if (popupTimeout === undefined) {
@@ -29,7 +31,8 @@
     }
     $("#jiraUrl").val(jiraUrl);
     $("#projectKey").val(projectKey);
-
+	$("#dpProjectKey").val(dpProjectKey);
+    $("#dpTaskRegexp").val(dpTaskRegexp);
     $("#popupTimeout").val(popupTimeout);
     $("#requestTimeout").val(requestTimeout);
     $("#color").val(badgeColor);
@@ -42,6 +45,8 @@
 function save_options() {
     localStorage["jiraUrl"] = $('#jiraUrl').val();
     localStorage["projectKey"] = $('#projectKey').val();
+	localStorage["dpProjectKey"] = $('#dpProjectKey').val();
+	localStorage["dpTaskRegexp"] = $('#dpTaskRegexp').val();
 
 
     localStorage["showPopup"] = $('#showPopup').prop("checked");
@@ -50,8 +55,8 @@ function save_options() {
 
     localStorage["playGoHome"] = $('#playGoHome').prop("checked");
 
-    var badgeColor = '#' + document.getElementById('color').color;
-    localStorage["badgeColor"] = badgeColor;
+    //var badgeColor = '#' + document.getElementById('color').color;
+    //localStorage["badgeColor"] = badgeColor;
 
     localStorage["popupTimeout"] = $("#popupTimeout").val();
 
