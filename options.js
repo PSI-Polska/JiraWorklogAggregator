@@ -24,6 +24,11 @@ function save_options() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+	
+	if(localStorage["installationDate"] == undefined){
+		localStorage["installationDate"] = new Date();
+	}
+	
     $("#save").click(function () {
         save_options();
     });
