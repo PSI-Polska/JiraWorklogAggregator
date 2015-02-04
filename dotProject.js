@@ -5,13 +5,12 @@
                 data: {},
                 success: function(data, status, jqXHR) {
                     var results = new Array();
-                    var table = $($(data).find('.tbl'));
+					var wrappedData = $(data);
+                    var table = $(wrappedData.find('.tbl'));
                     table.find('tr').each(function(tr) {
                         var tds = $(this).find('td');
                         if (tds.length === 6) {
-
-                            if (isDevelopmentOrDocumentationTask(tds[2])) {
-
+                           // if (isDevelopmentOrDocumentationTask(tds[2])) {
                                 var username = $(this).attr('username-key');
                                 if (results[username] == undefined) {
                                     results[username] = new Array();
@@ -26,7 +25,7 @@
 
                                     results[username][date.getDay() - 1] += entry
                                 }
-                            }
+                        //    }
                         }
                     });
 
