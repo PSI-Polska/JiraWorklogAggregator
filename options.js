@@ -1,16 +1,20 @@
 ﻿function restore_options() {
     var jiraUrl = localStorage["jiraUrl"];
     var projectKey = localStorage["projectKey"];
-	var dpProjectKey = localStorage["dpProjectKey"]
-	var dpTaskRegexp = localStorage["dpTaskRegexp"]
-
+	var dpProjectKey = localStorage["dpProjectKey"];
+	var dpTaskRegexp = localStorage["dpTaskRegexp"];
+	var surname = localStorage["surname"];
+	
     $("#jiraUrl").val(jiraUrl);
     $("#projectKey").val(projectKey);
 	$("#dpProjectKey").val(dpProjectKey);
     $("#dpTaskRegexp").val(dpTaskRegexp);
+	$("#surname").val(surname);
+	
 };
 
 function save_options() {
+    localStorage["surname"] = $('#surname').val();
     localStorage["jiraUrl"] = $('#jiraUrl').val();
     localStorage["projectKey"] = $('#projectKey').val();
 	localStorage["dpProjectKey"] = $('#dpProjectKey').val();

@@ -1,4 +1,4 @@
-/* GENERAL */
+﻿/* GENERAL */
 var currTime = -1;
 var loggedIn = undefined;
 var onClickListenerRegistered = false;
@@ -101,18 +101,58 @@ function setBadgeText(badgeText) {
     var details = {
         text: badgeText
     };
-    chrome.browserAction.setBadgeBackgroundColor({
-        "color": [hexToR(badgeColor), hexToG(badgeColor), hexToB(badgeColor), 125]
-    });
     chrome.browserAction.setBadgeText(details);
 }
 
-
 var requestInterval = function () {
-    readTime();
+
+	if(localStorage["surname"]!=""){		
+		personInOffice(localStorage["surname"],{error:function(data){setBadgeText("?");},success: function(data){
+		if(data!==null){
+			setBadgeText("x");
+		}
+		else{
+			setBadgeText("");
+		}}}	);
+	}
+	else{
+		setBadgeText("");
+	}
 };
 
-function createInterval(callback, delay, factor, oldInterval) {
+var presenceInterval=null;
+presenceInterval = createInterval(requestInterval, 5000, presenceInterval);
+
+function createInterval(callback, delay, oldInterval) {
     clearInterval(oldInterval);
-    return setInterval(callback, delay * factor);
+    return setInterval(callback, delay);
 };
+
+
+
+
+function personInOffice(person, callback){
+			 $.ajax({
+                url: 'http://dotproject.psi.pl/index.php?m=PSIEntranceLogger&tab=1',
+                data: {},
+                success: function(data, status, jqXHR) {
+                    var results = new Array();
+					var wrappedData = $(data);
+                    var table = $(wrappedData.find('.tabox'));
+					var result = null;
+                    table.find('tr').each(function(tr) {
+                        var tds = $(this).find('td');
+                        if (tds.length === 6) {
+							if($(tds[1]).text().toLowerCase()===person.toLowerCase()){
+								result = tds;
+							}
+						}
+                    });
+					callback.success.call(this, result);
+                },
+                error: function(data, status, error) {
+                    callback.error.call(this, data);
+                dataType: 'html'
+                },
+            });
+}
